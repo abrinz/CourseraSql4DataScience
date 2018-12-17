@@ -1,0 +1,388 @@
+Data Scientist Role Play: Profiling and Analyzing the Yelp Dataset Coursera Worksheet
+
+This is a 2-part assignment. In the first part, you are asked a series of questions that will help you profile and understand the data just like a data scientist would. For this first part of the assignment, you will be assessed both on the correctness of your findings, as well as the code you used to arrive at your answer. You will be graded on how easy your code is to read, so remember to use proper formatting and comments where necessary.
+
+In the second part of the assignment, you are asked to come up with your own inferences and analysis of the data for a particular research question you want to answer. You will be required to prepare the dataset for the analysis you choose to do. As with the first part, you will be graded, in part, on how easy your code is to read, so use proper formatting and comments to illustrate and communicate your intent as required.
+
+For both parts of this assignment, use this "worksheet." It provides all the questions you are being asked, and your job will be to transfer your answers and SQL coding where indicated into this worksheet so that your peers can review your work. You should be able to use any Text Editor (Windows Notepad, Apple TextEdit, Notepad ++, Sublime Text, etc.) to copy and paste your answers. If you are going to use Word or some other page layout application, just be careful to make sure your answers and code are lined appropriately.
+In this case, you may want to save as a PDF to ensure your formatting remains intact for you reviewer.
+
+
+
+Part 1: Yelp Dataset Profiling and Understanding
+
+1. Profile the data by finding the total number of records for each of the tables below:
+	
+i. Attribute table = 10000
+ii. Business table = 10000
+iii. Category table = 10000
+iv. Checkin table = 10000
+v. elite_years table = 10000
+vi. friend table = 10000
+vii. hours table = 10000
+viii. photo table = 10000
+ix. review table = 10000
+x. tip table = 10000
+xi. user table = 10000
+	
+
+
+2. Find the total distinct records by either the foreign key or primary key for each table. If two foreign keys are listed in the table, please specify which foreign key.
+
+i. Business = 10000
+ii. Hours = 1562
+iii. Category = 2643
+iv. Attribute = 1115
+v. Review = 10000
+vi. Checkin = 493
+vii. Photo = 10000
+viii. Tip = 537 (using user_id)
+ix. User = 10000 
+x. Friend = 11
+xi. Elite_years = 2780
+
+Note: Primary Keys are denoted in the ER-Diagram with a yellow key icon.	
+
+
+
+3. Are there any columns with null values in the Users table? Indicate "yes," or "no."
+
+	Answer:
+	No - but there are plenty of columns with 0 in them
+	
+	SQL code used to arrive at answer:
+	
+	select sum(case when id is null then 1 else 0 end) as nullID
+,sum(case when name is null then 1 else 0 end) as nullName
+,sum(case when review_count is null then 1 else 0 end) as nullRC
+,sum(case when yelping_since is null then 1 else 0 end) as nullYS
+,sum(case when useful is null then 1 else 0 end) as nullUseful
+,sum(case when funny is null then 1 else 0 end) as nullFunny
+,sum(case when cool is null then 1 else 0 end) as nullCool
+,sum(case when fans is null then 1 else 0 end) as nullFans
+,sum(case when average_stars is null then 1 else 0 end) as nullAS
+,sum(case when compliment_hot is null then 1 else 0 end) as nullCH
+,sum(case when compliment_more is null then 1 else 0 end) as nullCM
+,sum(case when compliment_cute is null then 1 else 0 end) as nullCC
+,sum(case when compliment_list is null then 1 else 0 end) as nullCL
+,sum(case when compliment_note is null then 1 else 0 end) as nullCN
+,sum(case when compliment_plain is null then 1 else 0 end) as nullCP
+,sum(case when compliment_cool is null then 1 else 0 end) as nullCCo
+,sum(case when compliment_funny is null then 1 else 0 end) as nullCF
+,sum(case when compliment_writer is null then 1 else 0 end) as nullCW
+,sum(case when compliment_photos is null then 1 else 0 end) as nullCP
+from user
+
+	
+4. For each table and column listed below, display the smallest (minimum), largest (maximum), and average (mean) value for the following fields:
+
+	i. Table: Review, Column: Stars
+	
+		min: 1		max: 5		avg: 3.7082
+		
+	
+	ii. Table: Business, Column: Stars
+	
+		min: 1		max: 5		avg: 3.6549
+		
+	
+	iii. Table: Tip, Column: Likes
+	
+		min: 0		max: 2		avg: 0.0144
+		
+	
+	iv. Table: Checkin, Column: Count
+	
+		min: 1		max: 53		avg: 1.9414
+		
+	
+	v. Table: User, Column: Review_count
+	
+		min: 0		max: 2000		avg: 24.2995
+		
+
+
+5. List the cities with the most reviews in descending order:
+
+	SQL code used to arrive at answer:
+	select city, count(distinct r.id) as reviews
+from business b
+join review r on r.business_id = b.id
+group by city
+order by reviews desc
+	
+	Copy and Paste the Result Below:
+	city            | reviews |
++-----------------+---------+
+| Las Vegas       |     193 |
+| Phoenix         |      65 |
+| Toronto         |      51 |
+| Scottsdale      |      37 |
+| Henderson       |      30 |
+| Tempe           |      28 |
+| Pittsburgh      |      23 |
+| Chandler        |      22 |
+| Charlotte       |      21 |
+| Montréal        |      18 |
+| Madison         |      16 |
+| Gilbert         |      13 |
+| Mesa            |      13 |
+| Cleveland       |      12 |
+| North Las Vegas |       6 |
+| Edinburgh       |       5 |
+| Glendale        |       5 |
+| Lakewood        |       5 |
+| Cave Creek      |       4 |
+| Champaign       |       4 |
+| Markham         |       4 |
+| North York      |       4 |
+| Mississauga     |       3 |
+| Surprise        |       3 |
+| Avondale        |       2 |
++-----------------+---------+
+	
+6. Find the distribution of star ratings to the business in the following cities:
+
+i. Avon
+
+SQL code used to arrive at answer:
+select stars, count(distinct id) as businesses
+from business b
+where city = 'Avon'
+group by stars
+
+Copy and Paste the Resulting Table Below (2 columns – star rating and count):
++-------+------------+
+| stars | businesses |
++-------+------------+
+|   1.5 |          1 |
+|   2.5 |          2 |
+|   3.5 |          3 |
+|   4.0 |          2 |
+|   4.5 |          1 |
+|   5.0 |          1 |
++-------+------------+
+
+ii. Beachwood
+
+SQL code used to arrive at answer:
+select stars, count(distinct id) as businesses
+from business b
+where city = 'Beachwood'
+group by stars
+
+Copy and Paste the Resulting Table Below (2 columns – star rating and count):
++-------+------------+
+| stars | businesses |
++-------+------------+
+|   2.0 |          1 |
+|   2.5 |          1 |
+|   3.0 |          2 |
+|   3.5 |          2 |
+|   4.0 |          1 |
+|   4.5 |          2 |
+|   5.0 |          5 |
++-------+------------+	
+
+
+7. Find the top 3 users based on their total number of reviews:
+		
+	SQL code used to arrive at answer:
+	select id, review_count
+	from user
+	order by review_count desc
+	limit 3
+		
+	Copy and Paste the Result Below:
+		
++------------------------+--------------+
+| id                     | review_count |
++------------------------+--------------+
+| -G7Zkl1wIWBBmD0KRy_sCw |         2000 |
+| -3s52C4zL_DHRK0ULG6qtg |         1629 |
+| -8lbUNlXVSoXqaRRiHiSNg |         1339 |
++------------------------+--------------+
+
+8. Does posing more reviews correlate with more fans?
+
+	Please explain your findings and interpretation of the results:
+	It does, but only to an extent. 
+	I looked at the users with the most fans and the users with the most reviews in order to see how much of an overlap there was between the top performers in each group. There was some overlap (out of the top 10 review posters, half were in the top 10 users with fans).
+
+	
+9. Are there more reviews with the word "love" or with the word "hate" in them?
+
+	Answer:
+	There are more reviews with the word "love" than with "hate"
+
+	
+	SQL code used to arrive at answer:
+	select case when text like '%love%' then 'Love' 
+	when text like '%hate%' then 'Hate' end as Words,
+	count(*) as ct
+	from review
+	group by case when text like '%love%' then 'Love' 
+	when text like '%hate%' then 'Hate' end 
+	
+	
+10. Find the top 10 users with the most fans:
+
+	SQL code used to arrive at answer:
+	select id, review_count, fans
+	from user
+	order by fans desc
+	limit 10
+	
+	Copy and Paste the Result Below:
++------------------------+--------------+------+
+| id                     | review_count | fans |
++------------------------+--------------+------+
+| -9I98YbNQnLdAmcYfb324Q |          609 |  503 |
+| -8EnCioUmDygAbsYZmTeRQ |          968 |  497 |
+| --2vR0DIsmQ6WfcSzKWigw |         1153 |  311 |
+| -G7Zkl1wIWBBmD0KRy_sCw |         2000 |  253 |
+| -0IiMAZI2SsQ7VmyzJjokQ |          930 |  173 |
+| -g3XIcCb2b-BD0QBCcq2Sw |          813 |  159 |
+| -9bbDysuiWeo2VShFJJtcw |          377 |  133 |
+| -FZBTkAZEXoP7CYvRV2ZwQ |         1215 |  126 |
+| -9da1xk7zgnnfO1uTVYGkA |          862 |  124 |
+| -lh59ko3dxChBSZ9U7LfUw |          834 |  120 |
++------------------------+--------------+------+
+	
+	
+11. Is there a strong relationship (or correlation) between having a high number of fans and being listed as "useful" or "funny?" Out of the top 10 users with the highest number of fans, what percent are also listed as “useful” or “funny”?
+
+Key:
+0% - 25% - Low relationship
+26% - 75% - Medium relationship
+76% - 100% - Strong relationship
+	
+	SQL code used to arrive at answer:
+	select sum(usefulOrFunnyInd)/count(*) * 100 as relationship
+	from(
+	select id, fans, case when useful is not null or funny is not null then 1 else 0 end as usefulOrFunnyInd
+	from user
+	order by fans desc
+	limit 10)
+	
+	Copy and Paste the Result Below:
+	+--------------+
+	| relationship |
+	+--------------+
+	|          100 |
+	+--------------+
+	
+	Please explain your findings and interpretation of the results:
+	Strong relationship - every user in the top 10 of fans is useful and funny.
+	
+	
+
+Part 2: Inferences and Analysis
+
+1. Pick one city and category of your choice and group the businesses in that city or category by their overall star rating. Compare the businesses with 2-3 stars to the businesses with 4-5 stars and answer the following questions. Include your code.
+	
+i. Do the two groups you chose to analyze have a different distribution of hours?
+	Not that I could ascertain.
+
+ii. Do the two groups you chose to analyze have a different number of reviews?
+  	Yes the groups with 2-3 stars have more reviews.
+         
+iii. Are you able to infer anything from the location data provided between these two groups? Explain.
+	Yes - certain postal codes have higher reviews, so those are probably higher populated areas.
+
+SQL code used for analysis:
+
+
+select case when stars between 2 and 3 then '2-3'
+when stars between 4 and 5 then '4-5' end as starsGrouping,
+avg(review_count) as average_reviews,
+postal_code,
+h.hours
+from business b
+inner join hours h on h.business_id = b.id
+where city = 'Toronto'
+group by case when stars between 2 and 3 then '2-3'
+when stars between 4 and 5 then '4-5' end
+,postal_code
+,h.hours
+-- ,b.name
+-- ,b.review_count
+-- ,h.hours
+		
+2. Group business based on the ones that are open and the ones that are closed. What differences can you find between the ones that are still open and the ones that are closed? List at least two differences and the SQL code you used to arrive at your answer.
+		
+i. Difference 1:
+     Stars is one difference - businesses that are still open have higher average stars
+         
+ii. Difference 2:
+	Review count is another difference - businesses that are still open have higher reviews
+         
+         
+         
+SQL code used for analysis:
+select is_open,
+avg(stars) as average_stars,
+avg(review_count) as average_reviews
+from business
+group by is_open
+	
+	
+3. For this last part of your analysis, you are going to choose the type of analysis you want to conduct on the Yelp dataset and are going to prepare the data for analysis.
+
+Ideas for analysis include: Parsing out keywords and business attributes for sentiment analysis, clustering businesses to find commonalities or anomalies between them, predicting the overall star rating for a business, predicting the number of fans a user will have, and so on. These are just a few examples to get you started, so feel free to be creative and come up with your own problem you want to solve. Provide answers, in-line, to all of the following:
+	
+i. Indicate the type of analysis you chose to do:
+      Predicting what type of reactions (i.e. "useful,""funny,""cool) a user will get on the review they've written based on the keywords   
+         
+ii. Write 1-2 brief paragraphs on the type of data you will need for your analysis and why you chose that data:
+     I'll need historical reviews and their reactions, as well as the text those reviews contain. I'll need a wide variety of reviews in order to get accurate training data. I'll need to know which users wrote the review in order to determine if there's a correlation between user and reactions, or if it's purely the text of the review that determines the outcome. I need the text of the reviews in order to determine which words affect the reactions the most. 
+                  
+iii. Output of your finished dataset:
+I didn't include the text field becausse it kept messing up the formatting of the dataset when I tried to paste it into the document.
++--------+-------+------+------------------------+------------------------+
+| useful | funny | cool | user_id                | id                     |
++--------+-------+------+------------------------+------------------------+
+|      0 |     0 |    0 | zyYWUdaodH0h1jCZAvFRPg | -1r0vbjM63dz_aBqutjkDA |
+|      1 |     0 |    1 | zxmDASzecFb5zqaLShRTnw | -5MY5v_3shY1PuCycpvcsQ |
+|      3 |     0 |    0 | zxMHVPoMWY5myDNWYAKt8g | -0V93PcDUm1o3h1J6aw3Bw |
+|      0 |     0 |    0 | zwy_eVvHljApk1vH5Wtl2A | -5FCJgEWrTDPwu3KHnKsCg |
+|      6 |     1 |    1 | zwo4S612wfakZodLQ8aMIQ | -34ZICJxLZyDKJGylwEpjQ |
+|      0 |     2 |    0 | zvuK125GpEHS9LlVh7caSg | --aRZxW-Z6fEsqH9UYns9g |
+|      0 |     0 |    0 | zuJwiAXFGQ4_Dfozybx5kg | -0XZUDb8glI_qczqop_R5w |
+|      1 |     0 |    0 | zuIXTWoAi0bKmDOSNTKW6g | -0e2dg2pyzFCmZDUeiIBiQ |
+|      2 |     1 |    2 | ztGOFVpMu06lk1WZ6zt0VQ | -2W6SsUx63oERbMj_HlFMA |
+|      0 |     0 |    1 | zsZBYWYEmLLs81_f-HHM8w | -2LYi6L2JSznoI79DzCXUA |
+|      0 |     0 |    0 | zqYTwy4SfZaZmT3Cjk3o8Q | -3IUWFOvwMXqF6_BCeqs6Q |
+|      0 |     0 |    0 | zqM1HjD6TEpd8foVQhPLwg | -1J1PUNAuCaENXr21FH6Kg |
+|      1 |     1 |    0 | zpmh6ggFBOqnsIp71YFC3w | -2-KpIcOHgJ1C5URM3XEZQ |
+|      2 |     0 |    0 | zpmh6ggFBOqnsIp71YFC3w | -1KPQz6ijC6x6kJI1J_bEQ |
+|      0 |     1 |    0 | zpbLJxulEJKA8ZYnL_UH-Q | -744vbD5nl8bSA9e8v4DbA |
+|      0 |     0 |    0 | zp_hFRLAL8DO-5UwiLQzcA | -28SmJ4eDB_6EP8thDIblA |
+|      0 |     0 |    0 | zpHlYvD2h1oDD0Xeeu2D5w | -5LfBQ3phMouvnJ8s32zXA |
+|      1 |     1 |    1 | zoyb93pskMhDgXZgv-DKtA | -079lY8eTw-tZpbG7xgKyQ |
+|      1 |     1 |    1 | zolQHFHpU-tKb41QkluMrg | -7-m-WeIj5OJr9nnPnAPVQ |
+|      1 |     0 |    0 | zo1-8IQIt75w6jM0pyX5zg | -43RjmpQJ39EGc_fL0bqKg |
+|      0 |     0 |    0 | zngK6fa1hScQp3j3rVUXKg | -02-F2z_gih2ST0fAbYbKg |
+|      0 |     0 |    0 | znLGNDjxHUQKmSYOyqbsqg | -3cVq_H_SlQ1ZaD3kayRHg |
+|      0 |     0 |    0 | zlNRm45-sA9eQ1unXrUbvA | -4I1F5ELJUfsK2Nrfj5w5Q |
+|      4 |     2 |    6 | zlFj4sJmPwzS1WdEB0FnFQ | -7d8LtcB2bQKk1MIwwN9PQ |
+|      1 |     0 |    1 | zlE1LUNKddSXwRNlrQ7gbA | -0usztt0T87V1INp89Ra1A |
++--------+-------+------+------------------------+------------------------+
+
+
+         
+         
+iv. Provide the SQL code you used to create your final dataset:
+
+select 
+useful,
+funny,
+cool,
+user_id,
+id
+text
+from review
+
+
+
+
